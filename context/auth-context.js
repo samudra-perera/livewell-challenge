@@ -1,14 +1,16 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "../utils/firebase";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { auth, db } from "../utils/firebase";
 import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
   signOut,
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
-// Make sure AuthContext is initialized like this:
-const AuthContext = createContext({ user: null }); // Default value can help avoid destructuring errors
+const AuthContext = createContext();
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -22,23 +24,32 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const login = async (email, password) => {
-    await signInWithEmailAndPassword(auth, email, password);
+  const signup = async (email, password, role) => {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      email,
+      role,
+    });
+    return userCredential;
   };
 
-  const signup = async (email, password) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+  const login = async (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
   };
 
   const logout = async () => {
     await signOut(auth);
   };
 
+  const value = { user, signup, login, logout, loading };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
