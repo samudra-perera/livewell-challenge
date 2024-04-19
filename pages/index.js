@@ -69,9 +69,6 @@ export default function Home() {
         />
         <button type="submit">Create Thread</button>
       </form>
-      {user && (
-        <button onClick={handleLogout}>Logout</button> // Conditionally render logout button based on user state
-      )}
       <h2>Available Threads</h2>
       <ul>
         {threads.map((thread) => (
@@ -80,6 +77,7 @@ export default function Home() {
           </li>
         ))}
       </ul>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
