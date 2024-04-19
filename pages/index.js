@@ -8,10 +8,14 @@ import {
   getDocs,
 } from "firebase/firestore";
 import Link from "next/link";
+import { useAuth } from "../context/auth-context";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const [threads, setThreads] = useState([]);
   const [title, setTitle] = useState("");
+  const { logout, user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -41,6 +45,17 @@ export default function Home() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      console.log("Logged out successfully");
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+      alert("Logout failed: " + error.message);
+    }
+  };
+
   return (
     <div>
       <h1>Create New Thread</h1>
@@ -54,6 +69,9 @@ export default function Home() {
         />
         <button type="submit">Create Thread</button>
       </form>
+      {user && (
+        <button onClick={handleLogout}>Logout</button> // Conditionally render logout button based on user state
+      )}
       <h2>Available Threads</h2>
       <ul>
         {threads.map((thread) => (
