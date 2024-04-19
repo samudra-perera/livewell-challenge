@@ -32,21 +32,26 @@ export default function Thread() {
     e.preventDefault();
     if (!message) return;
 
+    const newMessage = {
+      text: message,
+      createdAt: new Date().toISOString(),
+      userId: user.uid,
+    };
+
     try {
       const threadRef = doc(db, "threads", threadId);
-      const newMessage = {
-        text: message,
-        createdAt: new Date(),
-        userId: user.uid,
-      };
       await updateDoc(threadRef, {
         messages: arrayUnion(newMessage),
       });
+
+      setThread((prevThread) => ({
+        ...prevThread,
+        messages: [...(prevThread.messages || []), newMessage],
+      }));
+
       setMessage("");
-      fetchThread();
     } catch (e) {
-      console.error("Error updating document: ", e);
-      alert("Failed to add message: " + e.message);
+      console.error(e);
     }
   };
 

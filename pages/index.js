@@ -1,4 +1,3 @@
-// pages/index.js
 import { useState, useEffect } from "react";
 import { db } from "../utils/firebase";
 import {
@@ -32,26 +31,34 @@ export default function Home() {
     e.preventDefault();
     if (!title) return;
 
+    const newThread = {
+      title: title,
+      createdAt: new Date().toISOString(),
+    };
+
     try {
       const docRef = await addDoc(collection(db, "threads"), {
         title: title,
         createdAt: serverTimestamp(),
       });
       console.log("Document written with ID: ", docRef.id);
+
+      setThreads((prevThreads) => [
+        ...prevThreads,
+        { ...newThread, id: docRef.id },
+      ]);
       setTitle("");
-      fetchThreads();
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error(e);
     }
   };
 
   const handleLogout = async () => {
     try {
       await logout();
-      console.log("Logged out successfully");
       router.push("/login");
     } catch (error) {
-      console.error("Logout failed", error);
+      console.error(error);
       alert("Logout failed: " + error.message);
     }
   };
@@ -69,6 +76,7 @@ export default function Home() {
         />
         <button type="submit">Create Thread</button>
       </form>
+      <button onClick={handleLogout}>Logout</button>
       <h2>Available Threads</h2>
       <ul>
         {threads.map((thread) => (
@@ -77,7 +85,6 @@ export default function Home() {
           </li>
         ))}
       </ul>
-      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
