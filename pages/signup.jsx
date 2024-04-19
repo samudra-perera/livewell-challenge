@@ -5,22 +5,23 @@ import { useRouter } from "next/router";
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const { signup } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await signup(email, password);
-      router.push("/"); // Redirect to home page after signup
+      await signup(email, password, role);
+      router.push("/dashboard"); // or wherever you want to redirect after signup
     } catch (error) {
-      alert(error.message);
+      alert("Signup failed: " + error.message);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
+      <div>
         <label>Email:</label>
         <input
           type="email"
@@ -28,6 +29,8 @@ export default function Signup() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+      </div>
+      <div>
         <label>Password:</label>
         <input
           type="password"
@@ -35,8 +38,16 @@ export default function Signup() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Signup</button>
-      </form>
-    </div>
+      </div>
+      <div>
+        <label>Role:</label>
+        <select value={role} onChange={(e) => setRole(e.target.value)} required>
+          <option value="">Select a role</option>
+          <option value="doctor">Doctor</option>
+          <option value="patient">Patient</option>
+        </select>
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
   );
 }

@@ -5,3 +5,4 @@
 - Hosting the service
 - Adding protected routing for the authentication
 - Using Redux for state managment instead of ReactContext
+-
