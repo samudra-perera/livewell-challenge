@@ -12,6 +12,8 @@ export default function Thread() {
   const [thread, setThread] = useState(null);
   const [message, setMessage] = useState("");
 
+  console.log(user);
+
   useEffect(() => {
     const fetchThread = async () => {
       if (threadId) {
@@ -35,7 +37,7 @@ export default function Thread() {
     const newMessage = {
       text: message,
       createdAt: new Date().toISOString(),
-      userId: user.uid,
+      userEmail: user.email,
     };
 
     try {
@@ -60,9 +62,15 @@ export default function Thread() {
       <h1>Thread: {thread?.title}</h1>
       <ul>
         {thread?.messages?.map((msg, index) => (
-          <li key={index}>{msg.text}</li>
+          <li key={index}>
+            {msg.text} <br />
+            <small>
+              Posted by: {msg.userEmail} ({user.role})
+            </small>
+          </li>
         ))}
       </ul>
+
       <form onSubmit={handleAddMessage}>
         <input
           type="text"

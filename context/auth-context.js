@@ -1,4 +1,3 @@
-// context/auth-context.js
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../utils/firebase";
 import {
@@ -7,7 +6,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const AuthContext = createContext();
 
@@ -16,11 +15,29 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        if (userDoc.exists()) {
+          const userDetails = userDoc.data();
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            role: userDetails.role,
+          });
+        } else {
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+          });
+        }
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
-    return () => unsubscribe;
+
+    return () => unsubscribe();
   }, []);
 
   const signup = async (email, password, role) => {
@@ -37,11 +54,11 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+    return await signInWithEmailAndPassword(auth, email, password);
   };
 
   const logout = async () => {
-    return signOut(auth);
+    await signOut(auth);
   };
 
   const value = { user, signup, login, logout, loading };
