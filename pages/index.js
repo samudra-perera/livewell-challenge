@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 export default function Home() {
   const { user } = useAuth();
-
+  console.log(user);
   useEffect(() => {
     if (!user) {
       window.location.href = "/login";

@@ -13,40 +13,33 @@ export default function Signup() {
     event.preventDefault();
     try {
       await signup(email, password, role);
-      router.push("/dashboard"); // or wherever you want to redirect after signup
+      router.push("/"); // Navigate to dashboard after signup
     } catch (error) {
-      alert("Signup failed: " + error.message);
+      console.error("ERROR SIGNING UP");
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>Role:</label>
-        <select value={role} onChange={(e) => setRole(e.target.value)} required>
-          <option value="">Select a role</option>
-          <option value="doctor">Doctor</option>
-          <option value="patient">Patient</option>
-        </select>
-      </div>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        placeholder="Email"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        placeholder="Password"
+      />
+      <select value={role} onChange={(e) => setRole(e.target.value)} required>
+        <option value="">Select Role</option>
+        <option value="doctor">Doctor</option>
+        <option value="patient">Patient</option>
+      </select>
       <button type="submit">Sign Up</button>
     </form>
   );

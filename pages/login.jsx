@@ -12,32 +12,28 @@ export default function Login() {
     event.preventDefault();
     try {
       await login(email, password);
-      router.push("/dashboard"); // Redirect to a dashboard or home page
+      router.push("/"); // Navigate to Dasborad after login
     } catch (error) {
-      alert("Login failed: " + error.message);
+      console.error("LOGIN ERROR");
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        placeholder="Email"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        placeholder="Password"
+      />
       <button type="submit">Login</button>
     </form>
   );
