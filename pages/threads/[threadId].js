@@ -38,6 +38,7 @@ export default function Thread() {
       text: message,
       createdAt: new Date().toISOString(),
       userEmail: user.email,
+      userRole: user.role,
     };
 
     try {
@@ -65,7 +66,7 @@ export default function Thread() {
           <li key={index}>
             {msg.text} <br />
             <small>
-              Posted by: {msg.userEmail} ({user.role})
+              Posted by: {msg.userEmail} ({msg.userRole})
             </small>
           </li>
         ))}
